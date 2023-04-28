@@ -58,7 +58,7 @@ def describe(obj, out=None):
 def get_hawk_data_from_key(key, data_dir, pcode=_pcode):
     fname = os.path.join(data_dir, key + ".hdf5")
     if not os.path.isfile(fname):
-        num = lut.lut[key]["id"]
+        num = hawk_lut.lut[key]["id"]
         url = f"https://figshare.com/ndownloader/files/{num}?private_link={pcode}"
         print(
             f"Downloading test data {key} from ORDA into {data_dir}", end="", flush=True
@@ -66,32 +66,3 @@ def get_hawk_data_from_key(key, data_dir, pcode=_pcode):
         fn, _ = urlretrieve(url, fname)
         print(" [DONE]")
         return fn
-
-
-if __name__ == "__main__":
-    import matplotlib.pyplot as plt
-    import numpy as np
-
-    with SBW(data_dir="./hawk_data") as data:
-        
-        acc = data["/NI/RPH_AR/01/LLC-07/acc"]
-        ts = data["/NI/xData/time"]
-
-        plt.figure()
-        plt.plot(ts[:], acc)
-        plt.xlabel(ts.attrs["units"])
-        plt.ylabel(acc.attrs["units"])
-
-        frf = data["/LMS/BR_AR/01/LLC-07/frf"]
-        fs = data["/LMS/xData/freq"]
-
-        plt.figure()
-        plt.semilogy(fs[:], np.abs(frf))
-        plt.xlabel(fs.attrs["units"])
-        plt.ylabel(frf.attrs["units"])
-
-        print(describe(frf))
-
-        g = data["LMS/BR_AR/01/LLC-07"]
-        print(type(g))
-        print(g)
