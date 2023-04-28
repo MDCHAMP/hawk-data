@@ -20,13 +20,13 @@ class file_wrapper(h5py.File):
                 pth = pth[1:]
             key = "_".join(pth.split("/")[1:3])
             print(key)
-            if key in lut.lut:
+            if key in hawk_lut.lut:
                 fn = get_hawk_data_from_key(key, self.data_dir)
                 if fn is None:
                     raise err
                 with open(fn, "rb") as f:
                     md5 = hashlib.md5(f.read()).hexdigest()
-                    if not md5 == lut.lut[key]["md5"]:
+                    if not md5 == hawk_lut.lut[key]["md5"]:
                         raise BadDownloadError(
                             "md5 checksum missmatch, check network connection and attempt redownload"
                         )
