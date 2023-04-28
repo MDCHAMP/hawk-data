@@ -3,7 +3,7 @@ import os
 from urllib.request import urlretrieve
 
 import h5py
-import lut
+import hawk_lut
 
 _pcode = "88e34cc543ff5aeeb9f4"
 
