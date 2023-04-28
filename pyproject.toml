@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hawk"
+version = "0.0.1"
+authors = [
+    { name = "Max Champneys", email = "max.champneys@sheffield.ac.uk" },
+    { name = "Tim Rogers" },
+]
+description = "API for access to the data from the DTHive testing campaign conducted on the BAE systems Hawk aircraft at the LVV in Sheffield."
+readme = "README.md"
+requires-python = ">=3.7"
+license = { text = "BSD-3-Clause" }
+classifiers = ["Programming Language :: Python :: 3"]
+dependencies = ["h5py"]
