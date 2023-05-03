@@ -11,7 +11,7 @@ authors = [
 ]
 description = "API for access to the data from the DTHive testing campaign conducted on the BAE systems Hawk aircraft at the LVV in Sheffield."
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.9"
 license = { text = "MIT" }
 classifiers = ["Programming Language :: Python :: 3"]
 dependencies = ["h5py"]
