@@ -89,18 +89,28 @@ def setup(obj, out=None):
     return out
 
 
-def explore(obj):
-    if "excitationType" in obj.attrs:
-        print(f"{obj.path} ({obj.attrs['excitationType']})")
-    else:
-        print(obj.path)
-    for k, o in obj.items():
-        if isinstance(o, h5py.Dataset):
-            print(f"    {k} ({o.attrs['units']})")
-        elif o is not None:
-            explore(o)
+def explore2(obj, depth=10, out=None):
+    opath = obj.path
+    if obj.path == '':
+        opath = '/'
+    if out is None:
+        out = {}
+    new = {}
+    for k in obj.keys():
+        pth = pp.join(opath, k)
+        link = obj.get(k, getlink=True)
+        if isinstance(link, h5py.ExternalLink):
+            new |= {pth: f"(undownloaded)"}
         else:
-            print(f"{obj.path}/{k} (undownloaded)")
+            o = obj.get(k)
+            if isinstance(o, h5py.Dataset):
+                new |= {pth: f"Dataset: {o.attrs['measurement']} ({o.attrs['units']}) {o.shape}"}
+            elif depth>1:
+                new |= explore2(o, depth=depth - 1)
+            else:
+                new |= {pth: f'...'}
+    out |= {opath: new}
+    return out
 
 
 def describe(obj, setup=1):
@@ -114,10 +124,11 @@ def describe(obj, setup=1):
             "sensorID",
             "singalType",
         ]
-        out = {s: n for s, n in zip(s, obj.path.split("/"))} 
+        out = {s: n for s, n in zip(s, obj.path.split("/"))}
         if setup:
             out |= obj.setup()
         return out
+
 
 # %% Horrible monkey patches
 
@@ -126,19 +137,15 @@ h5py.Group.__getitem__ = Group_getter_wrapped
 h5py.Group.setup = setup
 h5py.Dataset.setup = setup
 
-h5py.Group.explore = explore
-h5py.Dataset.explore = explore
+h5py.Group.explore = explore2
+h5py.Dataset.explore = explore2
 
 h5py.File.describe = describe
 h5py.Group.describe = describe
 h5py.Dataset.describe = describe
 
-
-if __name__ == '__main__':
-
+if __name__ == "__main__":
     data_dir = "./hawk_data"
     data = SBW(data_dir)
-    series = 'BR_AR' # i.e Burst-random amplitude-ramp 
-    rep = '01'
-    test_series = data["LMS"][series][rep]
-    test_series.explore()
+
+
