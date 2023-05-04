@@ -45,7 +45,7 @@ def get_data_if_missing(key, data_dir, pcode=_pcode):
 
 
 def Group_getter_wrapped(self, *args, **kwargs):
-    pth = args[0]
+    pth = pp.join(self.path, pp.normpath(args[0]))
     if pth.startswith("/"):
         pth = pth[1:]
     key = "_".join(pth.split("/")[1:3])
@@ -56,7 +56,7 @@ def Group_getter_wrapped(self, *args, **kwargs):
             raise err
         else:
             item = hdf5_group_getter(self, *args, **kwargs)
-    item.path = pp.join(self.path, pp.normpath(pth))
+    item.path = pth
     item.data_dir = self.data_dir
     return item
 
@@ -132,3 +132,13 @@ h5py.Dataset.explore = explore
 h5py.File.describe = describe
 h5py.Group.describe = describe
 h5py.Dataset.describe = describe
+
+
+if __name__ == '__main__':
+
+    data_dir = "./hawk_data"
+    data = SBW(data_dir)
+    series = 'BR_AR' # i.e Burst-random amplitude-ramp 
+    rep = '01'
+    test_series = data["LMS"][series][rep]
+    test_series.explore()
