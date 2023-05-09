@@ -4,12 +4,15 @@ from urllib.request import urlretrieve
 import posixpath as pp
 import h5py
 from hawk_lut import lut
+import misc
 
 # %% Misc declarations
 
 hdf5_group_getter = h5py.Group.__getitem__
 
 _pcode = "88e34cc543ff5aeeb9f4"
+
+
 
 # %% Exceptions
 
@@ -45,7 +48,11 @@ def get_data_if_missing(key, data_dir, pcode=_pcode):
 
 
 def Group_getter_wrapped(self, *args, **kwargs):
-    pth = pp.join(self.path, pp.normpath(args[0]))
+    try:
+        pth = pp.join(self.path, pp.normpath(args[0]))
+    except AttributeError:
+        pth = pp.normpath(args[0])
+        self.data_dir = ''
     if pth.startswith("/"):
         pth = pth[1:]
     key = "_".join(pth.split("/")[1:3])
@@ -91,8 +98,8 @@ def setup(obj, out=None):
 
 def explore2(obj, depth=10, out=None):
     opath = obj.path
-    if obj.path == '':
-        opath = '/'
+    if obj.path == "":
+        opath = "/"
     if out is None:
         out = {}
     new = {}
@@ -104,13 +111,22 @@ def explore2(obj, depth=10, out=None):
         else:
             o = obj.get(k)
             if isinstance(o, h5py.Dataset):
-                new |= {pth: f"Dataset: {o.attrs['measurement']} ({o.attrs['units']}) {o.shape}"}
-            elif depth>1:
+                new |= {
+                    pth: f"Dataset: {o.attrs['measurement']} ({o.attrs['units']}) {o.shape}"
+                }
+            elif depth > 1:
                 new |= explore2(o, depth=depth - 1)
             else:
-                new |= {pth: f'...'}
+                new |= {pth: f"..."}
     out |= {opath: new}
     return out
+
+
+def visit_linked(obj, func):
+    func(obj.name, obj)
+    if not isinstance(obj, h5py.Dataset):
+        for item in obj.values():
+            visit_linked(item, func)
 
 
 def describe(obj, setup=1):
@@ -143,9 +159,3 @@ h5py.Dataset.explore = explore2
 h5py.File.describe = describe
 h5py.Group.describe = describe
 h5py.Dataset.describe = describe
-
-if __name__ == "__main__":
-    data_dir = "./hawk_data"
-    data = SBW(data_dir)
-
-
