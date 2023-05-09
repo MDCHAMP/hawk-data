@@ -10,10 +10,6 @@ import misc
 
 hdf5_group_getter = h5py.Group.__getitem__
 
-_pcode = "88e34cc543ff5aeeb9f4"
-
-
-
 # %% Exceptions
 
 
@@ -24,10 +20,10 @@ class BadDownloadError(Exception):
 # %% Helper functions
 
 
-def get_data_if_missing(key, data_dir, pcode=_pcode):
+def get_data_if_missing(key, data_dir):
     fname = os.path.join(data_dir, key + ".hdf5")
     if not os.path.isfile(fname) or not key in lut:
-        url = f"https://figshare.com/ndownloader/files/{lut[key]['id']}?private_link={pcode}"
+        url = f"https://figshare.com/ndownloader/files/{lut[key]['id']}"
         print(
             f"Downloading test data {key} from ORDA into {data_dir}", end="", flush=True
         )
@@ -75,7 +71,7 @@ def SBW(data_dir="./hawk_data"):
     if not os.path.isdir(data_dir):
         os.makedirs(data_dir)
     pth = os.path.join(data_dir, "SBW_header.hdf5")
-    get_data_if_missing("SBW_header", data_dir, pcode=_pcode)
+    get_data_if_missing("SBW_header", data_dir)
     obj = h5py.File(pth, "r")
     obj.data_dir = data_dir
     obj.path = ""
