@@ -3,12 +3,14 @@ import os
 from urllib.request import urlretrieve
 import posixpath as pp
 import h5py
-from hawk_lut import lut
-import misc
+from hawk_lut_sbw import lut as lut_sbw
+from hawk_lut_fst import lut as lut_fst
 
 # %% Misc declarations
 
 hdf5_group_getter = h5py.Group.__getitem__
+
+lut = lut_sbw | lut_fst
 
 # %% Exceptions
 
@@ -76,6 +78,17 @@ def SBW(data_dir="./hawk_data"):
     obj.data_dir = data_dir
     obj.path = ""
     return obj
+
+def FST(data_dir="./hawk_data"):
+    if not os.path.isdir(data_dir):
+        os.makedirs(data_dir)
+    pth = os.path.join(data_dir, "FST_header.hdf5")
+    get_data_if_missing("FST_header", data_dir)
+    obj = h5py.File(pth, "r")
+    obj.data_dir = data_dir
+    obj.path = ""
+    return obj
+
 
 
 def setup(obj, out=None):
