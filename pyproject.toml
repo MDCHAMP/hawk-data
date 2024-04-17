@@ -14,4 +14,4 @@ readme = "README.md"
 requires-python = ">=3.9"
 license = { text = "MIT" }
 classifiers = ["Programming Language :: Python :: 3"]
-dependencies = ["h5py"]
+dependencies = ["h5py", "pandas", "numpy"]
