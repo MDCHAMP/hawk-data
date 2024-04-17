@@ -172,12 +172,12 @@ def describe(obj, setup=1):
 def get_FST_metadata(data_dir="./"):
     """Load the FST metadata as two pandas dfs. One for the tests and another for the sensors"""
     sensor_fname = os.path.join(data_dir, "Hawk_FST_sensor_meta.csv")
-    if not os.isfile(sensor_fname):
+    if not os.path.isfile(sensor_fname):
         sensor_url = "https://figshare.com/ndownloader/files/43971009"
         urlretrieve(sensor_url, sensor_fname)
     sensor_data = pd.read_csv(os.path.join(data_dir, sensor_fname))
 
-    test_fname = os.path.join(data_dir, "Hawk_FST_test_meta.csv")
+    test_fname = os.path.path.join(data_dir, "Hawk_FST_test_meta.csv")
     if not os.isfile(test_fname):
         test_url = "https://figshare.com/ndownloader/files/43971012"
         urlretrieve(test_url, test_fname)
