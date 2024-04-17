@@ -175,7 +175,7 @@ def get_FST_metadata(data_dir="./"):
     if not os.path.isfile(sensor_fname):
         sensor_url = "https://figshare.com/ndownloader/files/43971009"
         urlretrieve(sensor_url, sensor_fname)
-    sensor_data = pd.read_csv(os.path.join(data_dir, sensor_fname))
+    sensor_data = pd.read_csv(os.path.join(data_dir, sensor_fname), skiprows=1)
 
     test_fname = os.path.join(data_dir, "Hawk_FST_test_meta.csv")
     if not os.path.isfile(test_fname):
