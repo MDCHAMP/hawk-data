@@ -131,8 +131,12 @@ def explore2(obj, depth=10, out=None):
         else:
             o = obj.get(k)
             if isinstance(o, h5py.Dataset):
+                if 'measurement' not in o.attrs.keys():
+                    meas = pth.split('/')[-1]
+                else:
+                    meas = o.attrs['measurement']
                 new |= {
-                    pth: f"Dataset: {o.attrs['measurement']} ({o.attrs['units']}) {o.shape}"
+                    pth: f"Dataset: {meas} ({o.attrs['units']}) {o.shape}"
                 }
             elif depth > 1:
                 new |= explore2(o, depth=depth - 1)
