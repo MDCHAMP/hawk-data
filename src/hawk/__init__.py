@@ -78,6 +78,18 @@ def Group_getter_wrapped(self, *args, **kwargs):
     return item
 
 
+def Group_values_wrapped(self):
+    # h5py resolves links itself in values()/items(), bypassing __getitem__ and
+    # yielding None for external links whose file is not downloaded yet. Route
+    # through the wrapped getter so the download is triggered as it is for
+    # direct indexing.
+    return [self[k] for k in self.keys()]
+
+
+def Group_items_wrapped(self):
+    return [(k, self[k]) for k in self.keys()]
+
+
 # %% API
 
 
@@ -210,6 +222,8 @@ def slice_from_dfs(data, tests=[], channels=[]):
 # %% Horrible monkey patches
 
 h5py.Group.__getitem__ = Group_getter_wrapped
+h5py.Group.values = Group_values_wrapped
+h5py.Group.items = Group_items_wrapped
 
 h5py.Group.setup = setup
 h5py.Dataset.setup = setup
